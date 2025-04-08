@@ -1,0 +1,417 @@
+:root {
+    /* Variables de tipografía y colores generales */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --bg-color: #f9f9f9;
+    --text-color: #222;
+    
+    /* Variables para contenedores */
+    --container-max-width:900px;
+    --container-bg: #fff;
+    --container-shadow: rgba(0, 0, 0, 0.08);
+    
+    /* Variables para encabezados */
+    --heading-color: #333;
+    
+    /* Variables para tablas */
+    --table-border: #e0e0e0;
+    --table-header-bg: #f0f0f0;
+    --table-header-color: #444;
+    
+    /* Variables para botones */
+    --button-bg: #222;
+    --button-hover-bg: #444;
+    
+    /* Variables para modales */
+    --modal-bg: rgba(0, 0, 0, 0.5);
+    --modal-content-bg: #fff;
+    --modal-close-color: #888;
+    --modal-close-hover-color: #333;
+    
+    /* Variables para neumorfismo y profundidad */
+    --neumorphism-bg: #f0f0f0;
+    --neumorphism-box-shadow: inset 8px 8px 15px #cacaca, inset -8px -8px 15px #ffffff;
+    --neumorphism-hover-box-shadow: inset 2px 2px 5px #cacaca, inset -2px -2px 5px #ffffff;
+    
+    /* Variables para depth buttons */
+    --depth-button-bg: #f0f0f0;
+    --depth-button-color: #333;
+    
+    /* Variables para select e inputs */
+    --custom-select-border: #e0e0e0;
+    --custom-select-bg: #fff;
+    
+    /* Variables para focus de inputs */
+    --input-focus-border: #aaa;
+    --input-focus-shadow: 0 0 0 1px #aaa;
+    
+    /* Variable para elementos seleccionados */
+    --selected-bg: lightgreen;
+}
+
+/* =========================
+   Global & Tipografía
+========================= */
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+/* Para que los dos botones aparezcan en la misma línea con un espacio entre ellos */
+.action-buttons {
+    display: flex;       /* coloca los hijos en línea */
+    gap: 10px;           /* separa los elementos entre sí */
+    align-items: center; /* alinea verticalmente en el centro (opcional) */
+}
+
+
+td button.btn-action{
+     display: inline-block;
+    margin-right: 6px;
+}
+/* =========================
+   Contenedores y Layout
+========================= */
+.container {
+    max-width: var(--container-max-width);
+    margin: 20px auto;
+    padding: 30px;
+    background-color: var(--container-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--container-shadow);
+}
+
+/* =========================
+   Encabezados
+========================= */
+h1 {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--heading-color);
+}
+
+/* =========================
+   Tablas
+========================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid var(--table-border);
+    padding: 12px 15px;
+    text-align: left;
+}
+.pagination {
+    text-align: center;
+    margin: 20px;
+}
+th {
+    background-color: var(--table-header-bg);
+    font-weight: 600;
+    color: var(--table-header-color);
+}
+.suggestions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    background: white;
+}
+.suggestions-list li {
+    padding: 8px;
+    cursor: pointer;
+}
+.suggestions-list li:hover {
+    background-color: #eee;
+}
+
+/* =========================
+   Botones y Enlaces
+========================= */
+button,
+a button {
+    background-color: var(--button-bg);
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+button:hover,
+a button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* =========================
+   Acciones
+========================= */
+.actions {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* =========================
+   Inputs y Selects
+========================= */
+input[type="text"], select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid var(--custom-select-border);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: var(--text-color);
+    background: var(--custom-select-bg);
+}
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+    box-shadow: var(--input-focus-shadow);
+}
+
+/* Select personalizado */
+.custom-select {
+    padding: 10px;
+    border: 1px solid var(--custom-select-border);
+    border-radius: 8px;
+    font-size: 16px;
+    color: var(--text-color);
+    background: var(--custom-select-bg);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* =========================
+   Modales
+========================= */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-bg);
+}
+.modal-content {
+    background-color: var(--modal-content-bg);
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 20%;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.close {
+    color: var(--modal-close-color);
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+        position: relative;
+    top: -25px;
+    left: 15;
+}
+.close:hover,
+.close:focus {
+    color: var(--modal-close-hover-color);
+    text-decoration: none;
+}
+
+/* =========================
+   Formulario de Importación
+========================= */
+#importExcelForm {
+    margin-top: 20px;
+}
+#importExcelForm input[type="file"] {
+    display: block;
+    margin: 0 auto 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    border: 1px solid var(--custom-select-border);
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+}
+#importExcelForm input[type="submit"] {
+    background-color: var(--button-bg);
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#importExcelForm input[type="submit"]:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* =========================
+   Listas
+========================= */
+ul#keywordList li {
+    list-style: none;
+    padding: 10px;
+    border: 1px solid var(--custom-select-border);
+    margin-bottom: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+ul#keywordList li.selected {
+    background-color: var(--selected-bg);
+    color: #2e7d32;
+}
+ul#keywordList li:hover {
+    background-color: #f0f0f0;
+}
+
+/* =========================
+   Botones Neumórficos
+========================= */
+.neumorphism-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+}
+.depth-button {
+    width: 200px;
+    height: 200px;
+    background: var(--depth-button-bg);
+    border-radius: 20px;
+    box-shadow: var(--neumorphism-box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--depth-button-color);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.depth-button i {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+.depth-button span {
+    font-size: 18px;
+    text-align: center;
+}
+.depth-button:hover {
+    box-shadow: var(--neumorphism-hover-box-shadow);
+    transform: translateY(-3px);
+}
+
+/* =========================
+   Estilos Adicionales
+========================= */
+/* Botón Volver Atrás */
+.back-button {
+    position: fixed;
+    bottom: 20px;
+    right: 85px;
+    z-index: 1000;
+}
+.back-button a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--button-bg);
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 18px;
+}
+.back-button a:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* =========================
+   Menú Flotante
+========================= */
+.floating-menu {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.menu-toggle {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    outline: none;
+}
+.floating-menu-items {
+    display: none; /* Se ocultan por defecto */
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    padding: 0 10px;
+}
+/* Cuando se active la clase 'active', se muestran los items */
+.floating-menu-items.active {
+    display: flex;
+}
+.floating-menu-item {
+    position: relative;
+    margin-bottom: 10px;
+    width: 50px;
+    height: 50px;
+    transition: all 0.3s ease;
+}
+.floating-menu-item .menu-icon {
+    background-color: #000;
+    color: #fff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.floating-menu-item .menu-label {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #000;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease, right 0.3s ease;
+    pointer-events: none;
+}
+.floating-menu-item:hover .menu-label {
+    opacity: 1;
+    right: 70px;
+}
