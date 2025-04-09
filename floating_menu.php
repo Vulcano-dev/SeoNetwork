@@ -72,8 +72,7 @@
             <input type="text" id="pageName" name="pageName" required>
             <label for="pageUrl">URL:</label>
             <input type="text" id="pageUrl" name="pageUrl">
-            <label for="pageTitle">Título:</label>
-            <input type="text" id="pageTitle" name="pageTitle">
+
             <label for="parentPage">Página Principal:</label>
             <select id="parentPage" name="parentPage">
                 <option value="">Ninguna</option>
@@ -128,21 +127,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Añadir etiqueta: Al crear la etiqueta se recarga la página actual
     const btnAddLabel = document.getElementById('menuAddLabel');
     if (btnAddLabel) {
-        btnAddLabel.addEventListener('click', (e) => {
-            e.preventDefault();
-            const modal = document.getElementById('addLabelModal');
-            if (modal) {
-                modal.style.display = 'block';
-                enviarFormulario('addLabelForm', 'controller.php?action=create_label', data => {
-                    if (data.includes('creada')) {
-                        location.reload();
+    btnAddLabel.addEventListener('click', (e) => {
+        e.preventDefault();
+        const modal = document.getElementById('addLabelModal');
+        if (modal) {
+            modal.style.display = 'block';
+            enviarFormulario('addLabelForm', 'controller.php?action=create_label', data => {
+                if (data.includes('creada')) {
+                    modal.style.display = 'none';
+                    const form = document.getElementById('addLabelForm');
+                    if (form) form.reset();
+
+                    // Detectar si estamos en etiquetas.php y usar recarga inteligente
+                    if (typeof recargarEtiquetas === "function") {
+                        recargarEtiquetas();
                     } else {
-                        console.error('Error al crear etiqueta:', data);
+                        location.reload(); // fallback si estamos en otra página
                     }
-                });
-            }
-        });
-    }
+                } else {
+                    console.error('Error al crear etiqueta:', data);
+                }
+            });
+        }
+    });
+}
+
 
     // Añadir página
     const btnAddPage = document.getElementById('menuAddPage');

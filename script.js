@@ -343,6 +343,10 @@ function loadEtiquetasData(page = 1) {
             renderEtiquetaPagination(data.totalPages);
          })
         .catch(error => console.error('Error al cargar etiquetas:', error));
+window.recargarEtiquetas = function () {
+    loadEtiquetasData(currentEtiquetaPage);
+};
+
 }
 
 function renderEtiquetaPagination(totalPages) {
@@ -655,14 +659,20 @@ pageSuggestions.addEventListener('click', function (e) {
 function inicializarApp() {
     // Inicializar formularios asíncronos
     if (document.getElementById('addLabelForm')) {
-        enviarFormulario('addLabelForm', 'controller.php?action=create_label', data => {
-            if (data.includes('creada correctamente')) {
-                actualizarPagina();
+    enviarFormulario('addLabelForm', 'controller.php?action=create_label', data => {
+        if (data.includes('creada correctamente')) {
+            closeModal(document.getElementById('addLabelModal'));
+            if (typeof recargarEtiquetas === "function") {
+                recargarEtiquetas();
             } else {
-                console.error('Error al crear etiqueta:', data);
+                actualizarPagina();
             }
-        });
-    }
+        } else {
+            console.error('Error al crear etiqueta:', data);
+        }
+    });
+}
+
     if (document.getElementById('addPageForm')) {
         enviarFormulario('addPageForm', 'controller.php?action=create_page', data => {
             if (data.includes('creada')) {

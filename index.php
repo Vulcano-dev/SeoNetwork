@@ -51,8 +51,6 @@
                     <input type="text" id="pageName" name="pageName">
                     <label for="pageUrl">URL de la Página:</label>
                     <input type="text" id="pageUrl" name="pageUrl">
-                    <label for="pageTitle">Título de la Página:</label>
-                    <input type="text" id="pageTitle" name="pageTitle">
                     <label for="parentPage">Página Principal:</label>
                     <select id="parentPage" name="parentPage">
                         <option value="">Ninguna</option>
@@ -75,6 +73,7 @@
             </div>
         </div>
     </div>
+    
 
     <script>
     // Al cargar el DOM, se solicita el selector de páginas para el modal "Añadir Página"
