@@ -324,17 +324,18 @@ function initEtiquetas() {
                         let color_estado = (etiqueta.estado === 'verde') ? 'green' :
                             (etiqueta.estado === 'rojo') ? 'red' : 'orange';
                         const tr = document.createElement('tr');
-                        tr.id = 'etiqueta-' + etiqueta.id;
-                        tr.innerHTML = `
-                            <td><span style="color:${color_estado};">&#x25C8;</span> ${etiqueta.etiqueta}</td>
-                            <td></td>
-                            <td>
-                                <button class="edit-label-btn" data-id="${etiqueta.id}" data-etiqueta="${etiqueta.etiqueta}" data-estado="${etiqueta.estado}">Editar</button>
-                                <button class="delete-label-btn" data-id="${etiqueta.id}">
-                                    <i class="fa fa-trash" style="color:white;"></i>
-                                </button>
-                            </td>
-                        `;
+tr.id = 'etiqueta-' + etiqueta.id;
+tr.innerHTML = `
+    <td><span style="color:${color_estado};">&#x25C8;</span> ${etiqueta.etiqueta}</td>
+    <td>${etiqueta.pagina_nombre || ''}</td>
+    <td>
+        <button class="edit-label-btn" data-id="${etiqueta.id}" data-etiqueta="${etiqueta.etiqueta}" data-estado="${etiqueta.estado}">Editar</button>
+        <button class="delete-label-btn" data-id="${etiqueta.id}">
+            <i class="fa fa-trash" style="color:white;"></i>
+        </button>
+    </td>
+`;
+
                         tableBody.appendChild(tr);
                     });
                 } else {

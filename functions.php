@@ -73,13 +73,23 @@ function getPaginas($conn, $limit, $offset) {
  * @return mysqli_result Resultado de la consulta con las etiquetas.
  */
 function getEtiquetas($conn) {
-    $sql = "SELECT id, etiqueta FROM etiquetas_seo";
+    $sql = "SELECT 
+                e.id, 
+                e.etiqueta, 
+                e.estado,
+                ep.pagina_id,
+                p.nombre AS pagina_nombre
+            FROM etiquetas_seo e
+            LEFT JOIN etiquetas_paginas ep ON e.id = ep.etiqueta_id
+            LEFT JOIN paginas p ON ep.pagina_id = p.id";
+    
     $result = $conn->query($sql);
     if (!$result) {
         die("Error en la consulta SQL (getEtiquetas): " . $conn->error);
     }
     return $result;
 }
+
 
 /**
  * Obtiene las páginas para el selector de página principal.
