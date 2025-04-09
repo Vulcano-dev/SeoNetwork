@@ -155,35 +155,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Añadir página
     const btnAddPage = document.getElementById('menuAddPage');
-    if (btnAddPage) {
-        btnAddPage.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const modal = document.getElementById('addPageModal');
-            if (modal) {
-                modal.style.display = 'block';
-                const select = document.getElementById('parentPage');
-                if (select && !select.dataset.loaded) {
-                    const res = await fetch('controller.php?action=get_selector_paginas');
-                    const paginas = await res.json();
-                    select.innerHTML = '<option value="">Ninguna</option>';
-                    paginas.forEach(p => {
-                        const opt = document.createElement('option');
-                        opt.value = p.id;
-                        opt.textContent = p.nombre;
-                        select.appendChild(opt);
-                    });
-                    select.dataset.loaded = "true";
+if (btnAddPage) {
+    btnAddPage.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const modal = document.getElementById('addPageModal');
+        if (!modal) return;
+
+        modal.style.display = 'block';
+
+        // Cargar selector de páginas solo una vez
+        const select = document.getElementById('parentPage');
+        if (select && !select.dataset.loaded) {
+            const res = await fetch('controller.php?action=get_selector_paginas');
+            const paginas = await res.json();
+            select.innerHTML = '<option value="">Ninguna</option>';
+            paginas.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.nombre;
+                select.appendChild(opt);
+            });
+            select.dataset.loaded = "true";
+        }
+
+        enviarFormulario('addPageForm', 'controller.php?action=create_page', data => {
+            if (data.includes('creada')) {
+                modal.style.display = 'none';
+                document.getElementById('addPageForm')?.reset();
+
+                // Si estamos en paginas.php
+                if (typeof recargarPaginas === "function") {
+                    recargarPaginas();
+                } else {
+                    location.reload(); // fallback
                 }
-                enviarFormulario('addPageForm', 'controller.php?action=create_page', data => {
-                    if (data.includes('creada')) {
-                        location.reload();
-                    } else {
-                        console.error('Error al crear página:', data);
-                    }
-                });
+            } else {
+                console.error('Error al crear página:', data);
             }
         });
-    }
+    });
+}
+
 
     // Importar Excel
     const btnImportExcel = document.getElementById('menuImportExcel');
