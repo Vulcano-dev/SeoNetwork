@@ -16,12 +16,13 @@ include 'floating_menu.php';
 <body>
     <div class="container">
         <h1>Páginas Creadas</h1>
+        <input type="text" id="buscadorPaginas" placeholder="Buscar páginas..." />
+
         <table id="paginasTable">
             <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>URL</th>
-                    <th>Título</th>
                     <th>Página Padre</th>
                     <th>Acciones</th>
                 </tr>

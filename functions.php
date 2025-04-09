@@ -50,7 +50,7 @@ function getPaginas($conn, $limit, $offset) {
     $totalPages = ceil($totalRows / $limit);
 
     // Obtener los registros para la tanda actual, incluyendo el nombre de la página padre
-    $sql = "SELECT p.id, p.nombre, p.url, p.titulo, p.pagina_padre_id, pp.nombre as padre_nombre 
+    $sql = "SELECT p.id, p.nombre, p.url, p.pagina_padre_id, pp.nombre as padre_nombre 
             FROM paginas p 
             LEFT JOIN paginas pp ON p.pagina_padre_id = pp.id 
             LIMIT $limit OFFSET $offset";
@@ -262,6 +262,8 @@ function deleteKeywordPage($conn, $pagina_id, $etiqueta_id) {
     }
 }
 
+
+
 /* ============================================================
    Operaciones INSERT (CREATE)
    ============================================================ */
@@ -272,20 +274,18 @@ function deleteKeywordPage($conn, $pagina_id, $etiqueta_id) {
  * @param mysqli $conn Conexión a la base de datos.
  * @param string $nombre Nombre de la página.
  * @param string $url URL de la página.
- * @param string $titulo Título de la página.
  * @param mixed $parent_page_id ID de la página principal (opcional).
  * @return string Mensaje indicando el resultado de la operación.
  */
-function createPage($conn, $nombre, $url, $titulo, $parent_page_id) {
-    if (empty($nombre) || empty($url) || empty($titulo)) {
+function createPage($conn, $nombre, $url, $parent_page_id) {
+    if (empty($nombre) || empty($url)) {
         return "Error: Nombre, URL y título son campos obligatorios.";
     }
     $nombre = $conn->real_escape_string($nombre);
     $url = $conn->real_escape_string($url);
-    $titulo = $conn->real_escape_string($titulo);
     $parent_value = !empty($parent_page_id) ? "'" . $conn->real_escape_string($parent_page_id) . "'" : "NULL";
-    $sql = "INSERT INTO paginas (nombre, url, titulo, pagina_padre_id)
-            VALUES ('$nombre', '$url', '$titulo', $parent_value)";
+    $sql = "INSERT INTO paginas (nombre, url, pagina_padre_id)
+            VALUES ('$nombre', '$url', $parent_value)";
     if ($conn->query($sql) === TRUE) {
         return "Página creada correctamente.";
     } else {
@@ -344,4 +344,32 @@ function toggleKeywordPage($conn, $pagina_id, $etiqueta_id) {
         }
     }
 }
+
+/**
+ * Busca páginas cuyo nombre coincida con el término.
+ *
+ * @param mysqli $conn Conexión a la base de datos.
+ * @param string $termino Término de búsqueda.
+ * @return array Array con resultados de páginas.
+ */
+function buscarPaginas($conn, $termino) {
+    $termino = $conn->real_escape_string($termino);
+    $sql = "
+        SELECT p.id, p.nombre, p.url, pp.nombre AS padre_nombre
+        FROM paginas p
+        LEFT JOIN paginas pp ON p.pagina_padre_id = pp.id
+        WHERE LOWER(p.nombre) LIKE LOWER('%$termino%')
+        ORDER BY p.nombre ASC
+        LIMIT 100
+    ";
+    $result = $conn->query($sql);
+    $paginas = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $paginas[] = $row;
+        }
+    }
+    return $paginas;
+}
+
 ?>

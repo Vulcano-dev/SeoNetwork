@@ -32,14 +32,19 @@ switch ($action) {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $nombre = $_POST["pageName"] ?? '';
         $url = $_POST["pageUrl"] ?? '';
-        $titulo = $_POST["pageTitle"] ?? '';
         $parent_page_id = $_POST["parentPage"] ?? '';
-        echo createPage($conn, $nombre, $url, $titulo, $parent_page_id);
+        echo createPage($conn, $nombre, $url, $parent_page_id);
         exit;
     }
     break;
-
-
+case 'buscar_paginas':
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        header('Content-Type: application/json');
+        $termino = isset($_GET['query']) ? $conn->real_escape_string($_GET['query']) : '';
+        echo json_encode(buscarPaginas($conn, $termino));
+        exit;
+    }
+    break;
 
 
     case 'delete_keyword_page':
@@ -230,8 +235,6 @@ switch ($action) {
                         <input type="text" id="pageName" name="pageName" class="custom-select">
                         <label for="pageUrl">URL de la Página:</label>
                         <input type="text" id="pageUrl" name="pageUrl" class="custom-select">
-                        <label for="pageTitle">Título de la Página:</label>
-                        <input type="text" id="pageTitle" name="pageTitle" class="custom-select">
                         <label for="parentPage">Página Principal:</label>
                         <select id="parentPage" name="parentPage" class="custom-select">
                             <option value="">Ninguna</option>

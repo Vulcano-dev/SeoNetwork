@@ -158,6 +158,29 @@ function initPaginas() {
             })
             .catch(error => console.error('Error al cargar páginas:', error));
     }
+    // Buscador de páginas
+const buscadorPaginas = document.getElementById('buscadorPaginas');
+if (buscadorPaginas) {
+    buscadorPaginas.addEventListener('input', function () {
+        const termino = this.value.trim().toLowerCase();
+        if (termino.length === 0) {
+            // Si está vacío, vuelve a la vista paginada normal
+            loadPaginasTable(currentPage);
+            return;
+        }
+
+        fetch('controller.php?action=buscar_paginas&query=' + encodeURIComponent(termino))
+            .then(res => res.json())
+            .then(data => {
+                cargarPaginas(data, tableBody);
+                // Desactivamos los botones de paginación para no romper la UX
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+            })
+            .catch(err => console.error('Error al buscar páginas:', err));
+    });
+}
+
 
     function cargarPaginas(paginas, tbody) {
         tbody.innerHTML = '';
@@ -171,7 +194,6 @@ function initPaginas() {
             tr.innerHTML = `
                 <td>${p.nombre}</td>
                 <td>${p.url}</td>
-                <td>${p.titulo}</td>
                 <td>${p.padre_nombre || ''}</td>
                 <td>
                     <div class="action-buttons">
