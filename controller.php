@@ -37,6 +37,25 @@ switch ($action) {
         exit;
     }
     break;
+    case 'buscar_etiquetas':
+    $query = isset($_GET['query']) ? $_GET['query'] : '';
+    $mostrar_todas = isset($_GET['all']) && $_GET['all'] == 1;
+    $resultado = buscarEtiquetas($query, $mostrar_todas);
+    header('Content-Type: application/json');
+    echo json_encode($resultado);
+    break;
+
+
+    case 'get_etiquetas_paginadas':
+    $pagina = isset($_GET['page']) ? intval($_GET['page']) : 1;
+    $mostrar_todas = isset($_GET['all']) && $_GET['all'] == 1;
+    $limite = 20;
+    $offset = ($pagina - 1) * $limite;
+    $resultado = obtener_etiquetas_paginadas($limite, $offset, $mostrar_todas);
+    header('Content-Type: application/json');
+    echo json_encode($resultado);
+    break;
+
 case 'buscar_paginas':
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
         header('Content-Type: application/json');

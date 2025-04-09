@@ -381,5 +381,98 @@ function buscarPaginas($conn, $termino) {
     }
     return $paginas;
 }
+function obtener_etiquetas_paginadas($limite, $offset, $mostrar_todas = false) {
+    $conn = getDatabaseConnection();
+
+    if ($mostrar_todas) {
+        $totalSql = "SELECT COUNT(*) as total FROM etiquetas_seo";
+        $sql = "SELECT 
+                    e.id, 
+                    e.etiqueta, 
+                    e.estado,
+                    ep.pagina_id,
+                    p.nombre AS pagina_nombre
+                FROM etiquetas_seo e
+                LEFT JOIN etiquetas_paginas ep ON e.id = ep.etiqueta_id
+                LEFT JOIN paginas p ON ep.pagina_id = p.id
+                ORDER BY e.etiqueta ASC
+                LIMIT $limite OFFSET $offset";
+    } else {
+        $totalSql = "SELECT COUNT(*) as total
+                     FROM etiquetas_seo e
+                     LEFT JOIN etiquetas_paginas ep ON e.id = ep.etiqueta_id
+                     WHERE ep.etiqueta_id IS NULL";
+
+        $sql = "SELECT e.id, e.etiqueta, e.estado
+                FROM etiquetas_seo e
+                LEFT JOIN etiquetas_paginas ep ON e.id = ep.etiqueta_id
+                WHERE ep.etiqueta_id IS NULL
+                ORDER BY e.etiqueta ASC
+                LIMIT $limite OFFSET $offset";
+    }
+
+    $totalResult = $conn->query($totalSql);
+    $total = $totalResult->fetch_assoc()['total'];
+    $totalPages = ceil($total / $limite);
+
+    $resultado = $conn->query($sql);
+    $etiquetas = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $etiquetas[] = $fila;
+    }
+
+    // También cargamos las páginas para el selector
+    $paginas = [];
+    $resPaginas = $conn->query("SELECT id, nombre FROM paginas ORDER BY nombre ASC");
+    while ($p = $resPaginas->fetch_assoc()) {
+        $paginas[] = $p;
+    }
+
+    return [
+        'etiquetas' => $etiquetas,
+        'totalPages' => $totalPages,
+        'paginas' => $paginas
+    ];
+}
+function buscarEtiquetas($termino, $mostrar_todas = false) {
+    $conn = getDatabaseConnection();
+    $termino = $conn->real_escape_string($termino);
+
+    if ($mostrar_todas) {
+        $sql = "SELECT 
+                    e.id, 
+                    e.etiqueta, 
+                    e.estado,
+                    ep.pagina_id,
+                    p.nombre AS pagina_nombre
+                FROM etiquetas_seo e
+                LEFT JOIN etiquetas_paginas ep ON e.id = ep.etiqueta_id
+                LEFT JOIN paginas p ON ep.pagina_id = p.id
+                WHERE LOWER(e.etiqueta) LIKE LOWER('%$termino%')
+                ORDER BY e.etiqueta ASC
+                LIMIT 100";
+    } else {
+        $sql = "SELECT 
+                    e.id, 
+                    e.etiqueta, 
+                    e.estado
+                FROM etiquetas_seo e
+                LEFT JOIN etiquetas_paginas ep ON e.id = ep.etiqueta_id
+                WHERE ep.etiqueta_id IS NULL
+                  AND LOWER(e.etiqueta) LIKE LOWER('%$termino%')
+                ORDER BY e.etiqueta ASC
+                LIMIT 100";
+    }
+
+    $resultado = $conn->query($sql);
+    $etiquetas = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $etiquetas[] = $fila;
+    }
+
+    return ['etiquetas' => $etiquetas];
+}
+
+
 
 ?>

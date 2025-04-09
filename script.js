@@ -308,53 +308,60 @@ if (buscadorPaginas) {
 // ======================================
 
 function initEtiquetas() {
-    function loadEtiquetasData() {
-        const allCheckbox = document.getElementById('toggleAllEtiquetas');
-        let url = 'controller.php?action=get_etiquetas';
-        if (allCheckbox && allCheckbox.checked) {
-            url += '&all=1';
-        }
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('etiquetasTable');
-                tableBody.innerHTML = '';
-                if (data.etiquetas.length > 0) {
-                    data.etiquetas.forEach(etiqueta => {
-                        let color_estado = (etiqueta.estado === 'verde') ? 'green' :
-                            (etiqueta.estado === 'rojo') ? 'red' : 'orange';
-                        const tr = document.createElement('tr');
-tr.id = 'etiqueta-' + etiqueta.id;
-tr.innerHTML = `
-    <td><span style="color:${color_estado};">&#x25C8;</span> ${etiqueta.etiqueta}</td>
-    <td>${etiqueta.pagina_nombre || ''}</td>
-    <td>
-        <button class="edit-label-btn" data-id="${etiqueta.id}" data-etiqueta="${etiqueta.etiqueta}" data-estado="${etiqueta.estado}">Editar</button>
-        <button class="delete-label-btn" data-id="${etiqueta.id}">
-            <i class="fa fa-trash" style="color:white;"></i>
-        </button>
-    </td>
-`;
+   let currentEtiquetaPage = 1;
 
-                        tableBody.appendChild(tr);
-                    });
-                } else {
-                    tableBody.innerHTML = '<tr><td colspan="3">No hay etiquetas no asignadas.</td></tr>';
-                }
-                // Llenar el selector del modal de edición
-                const selectPaginas = document.getElementById('editLabelPages');
-                if (selectPaginas) {
-                    selectPaginas.innerHTML = '<option value="">(Sin página)</option>';
-                    data.paginas.forEach(pagina => {
-                        const option = document.createElement('option');
-                        option.value = pagina.id;
-                        option.textContent = pagina.nombre;
-                        selectPaginas.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => console.error('Error al cargar etiquetas:', error));
-    }
+function loadEtiquetasData(page = 1) {
+    currentEtiquetaPage = page;
+    const allCheckbox = document.getElementById('toggleAllEtiquetas');
+    const mostrarTodas = allCheckbox && allCheckbox.checked ? '&all=1' : '';
+    fetch(`controller.php?action=get_etiquetas_paginadas&page=${page}${mostrarTodas}`)
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('etiquetasTable');
+            tableBody.innerHTML = '';
+
+            if (data.etiquetas.length > 0) {
+                data.etiquetas.forEach(etiqueta => {
+                    let color_estado = (etiqueta.estado === 'verde') ? 'green' :
+                        (etiqueta.estado === 'rojo') ? 'red' : 'orange';
+                    const tr = document.createElement('tr');
+                    tr.id = 'etiqueta-' + etiqueta.id;
+                    tr.innerHTML = `
+                        <td><span style="color:${color_estado};">&#x25C8;</span> ${etiqueta.etiqueta}</td>
+                        <td>${etiqueta.pagina_nombre || ''}</td>
+                        <td>
+                            <button class="edit-label-btn" data-id="${etiqueta.id}" data-etiqueta="${etiqueta.etiqueta}" data-estado="${etiqueta.estado}">Editar</button>
+                            <button class="delete-label-btn" data-id="${etiqueta.id}"><i class="fa fa-trash" style="color:white;"></i></button>
+                        </td>`;
+                    tableBody.appendChild(tr);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="3">No hay etiquetas.</td></tr>';
+            }
+
+            // Actualizar la paginación
+            renderEtiquetaPagination(data.totalPages);
+         })
+        .catch(error => console.error('Error al cargar etiquetas:', error));
+}
+
+function renderEtiquetaPagination(totalPages) {
+    const container = document.getElementById('etiquetaPagination');
+    if (!container) return;
+
+    container.innerHTML = `
+        <button id="prevEtiquetaPage" ${currentEtiquetaPage === 1 ? 'disabled' : ''}>Anterior</button>
+        <span>Página ${currentEtiquetaPage} de ${totalPages}</span>
+        <button id="nextEtiquetaPage" ${currentEtiquetaPage === totalPages ? 'disabled' : ''}>Siguiente</button>
+    `;
+
+    document.getElementById('prevEtiquetaPage').addEventListener('click', () => {
+        if (currentEtiquetaPage > 1) loadEtiquetasData(currentEtiquetaPage - 1);
+    });
+    document.getElementById('nextEtiquetaPage').addEventListener('click', () => {
+        if (currentEtiquetaPage < totalPages) loadEtiquetasData(currentEtiquetaPage + 1);
+    });
+}
 
     loadEtiquetasData();
 
@@ -377,12 +384,50 @@ loadEtiquetasData(); // Asegura que se carguen las etiquetas según el valor res
     // Buscador de etiquetas (filtra la tabla de etiquetas)
     const searchBox = document.getElementById('searchBox');
     if (searchBox) {
-        searchBox.addEventListener('input', function() {
-            const filter = this.value.toLowerCase();
-            document.querySelectorAll('#etiquetasTable tr').forEach(tr => {
-                tr.style.display = tr.textContent.toLowerCase().includes(filter) ? '' : 'none';
+       searchBox.addEventListener('input', function () {
+    const filtro = this.value.trim().toLowerCase();
+    const tableBody = document.getElementById('etiquetasTable');
+
+    if (filtro === '') {
+        loadEtiquetasData(currentEtiquetaPage);
+        return;
+    }
+
+    const mostrarTodas = (document.getElementById('toggleAllEtiquetas')?.checked) ? '&all=1' : '';
+
+    fetch('controller.php?action=buscar_etiquetas&query=' + encodeURIComponent(filtro) + mostrarTodas)
+        .then(response => response.json())
+        .then(data => {
+            tableBody.innerHTML = '';
+            if (data.etiquetas.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="3">No se encontraron coincidencias.</td></tr>';
+                return;
+            }
+
+            data.etiquetas.forEach(etiqueta => {
+                let color_estado = (etiqueta.estado === 'verde') ? 'green' :
+                    (etiqueta.estado === 'rojo') ? 'red' : 'orange';
+
+                const tr = document.createElement('tr');
+                tr.id = 'etiqueta-' + etiqueta.id;
+                tr.innerHTML = `
+                    <td><span style="color:${color_estado};">&#x25C8;</span> ${etiqueta.etiqueta}</td>
+                    <td>${etiqueta.pagina_nombre || ''}</td>
+                    <td>
+                        <button class="edit-label-btn" data-id="${etiqueta.id}" data-etiqueta="${etiqueta.etiqueta}" data-estado="${etiqueta.estado}">Editar</button>
+                        <button class="delete-label-btn" data-id="${etiqueta.id}"><i class="fa fa-trash" style="color:white;"></i></button>
+                    </td>`;
+                tableBody.appendChild(tr);
             });
-        });
+
+            // Quitar paginación
+            const paginacion = document.getElementById('etiquetaPagination');
+            if (paginacion) paginacion.innerHTML = '';
+        })
+        .catch(error => console.error('Error al buscar etiquetas:', error));
+});
+
+
     }
 
     // Delegación de eventos para editar y eliminar etiquetas

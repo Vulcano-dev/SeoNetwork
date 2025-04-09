@@ -40,6 +40,8 @@ include 'floating_menu.php';
                 <!-- Las filas se cargarán dinámicamente mediante fetch -->
             </tbody>
         </table>
+        <div id="etiquetaPagination" class="pagination"></div>
+
     </div>
 
     <!-- Modal para añadir etiqueta -->
