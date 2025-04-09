@@ -461,23 +461,25 @@ if (updateLabelBtn) {
         })
         .then(response => response.text())
         .then(data => {
-            if (data.includes('actualizada correctamente')) {
-                const colorEstado = (etiquetaEstado === 'verde') ? 'green'
-                                   : ((etiquetaEstado === 'rojo') ? 'red' : 'orange');
-                const fila = document.getElementById('etiqueta-' + etiquetaId);
-                fila.innerHTML = `
-                    <td><span style="color:${colorEstado};">&#x25C8;</span> ${etiquetaTexto}</td>
-                    <td>${paginaTexto}</td>
-                    <td>
-                        <button class="edit-label-btn" data-id="${etiquetaId}" data-etiqueta="${etiquetaTexto}" data-estado="${etiquetaEstado}">Editar</button>
-                        <button class="delete-label-btn" data-id="${etiquetaId}"><i class="fa fa-trash" style="color:white;"></i></button>
-                    </td>
-                `;
-                closeModal(document.getElementById('editLabelModal'));
-            } else {
-                console.error('Error al actualizar etiqueta:', data);
-            }
-        })
+    if (data.includes('actualizada correctamente')) {
+        const colorEstado = (etiquetaEstado === 'verde') ? 'green'
+                               : ((etiquetaEstado === 'rojo') ? 'red' : 'orange');
+        const fila = document.getElementById('etiqueta-' + etiquetaId);
+        fila.innerHTML = `
+            <td><span style="color:${colorEstado};">&#x25C8;</span> ${etiquetaTexto}</td>
+            <td>${paginaTexto}</td>
+            <td>
+                <button class="edit-label-btn" data-id="${etiquetaId}" data-etiqueta="${etiquetaTexto}" data-estado="${etiquetaEstado}">Editar</button>
+                <button class="delete-label-btn" data-id="${etiquetaId}"><i class="fa fa-trash" style="color:white;"></i></button>
+            </td>
+        `;
+        closeModal(document.getElementById('editLabelModal'));
+        location.reload(); // ← recarga toda la página
+    } else {
+        console.error('Error al actualizar etiqueta:', data);
+    }
+})
+
         .catch(err => console.error('Error:', err));
     });
 }
